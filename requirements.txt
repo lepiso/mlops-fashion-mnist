@@ -14,3 +14,4 @@ httpx==0.27.0
 python-dotenv==1.0.1
 PyYAML==6.0.1
 huggingface_hub==0.21.0# Rebuild trigger
+streamlit
