@@ -1,8 +1,11 @@
-# --- Section Modèle ---
 import os
-
+import pytest
 import numpy as np
+import joblib
+from fastapi.testclient import TestClient
+from src.api.main import app 
 
+# --- Section Modèle ---
 
 def test_model_exists():
     """Vérifie que les DEUX modèles existent"""
@@ -11,11 +14,16 @@ def test_model_exists():
 
 def test_model_loads():
     """Charge le modèle par défaut (RF)"""
-    import joblib
     model = joblib.load("models/rf_model.pkl")
     assert model is not None
 
 # --- Section API ---
+
+@pytest.fixture
+def client():
+    """Crée une instance du client de test FastAPI pour les tests ci-dessous"""
+    with TestClient(app) as c:
+        yield c
 
 def test_api_predict_valid(client):
     """Correction : On ajoute explicitement le model_type"""
