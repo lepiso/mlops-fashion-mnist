@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from pydantic import BaseModel, Field, field_validator
 
 FASHION_LABELS = {
@@ -10,12 +10,22 @@ FASHION_LABELS = {
 
 class PredictionInput(BaseModel):
     features: List[float] = Field(..., description="784 pixels normalises [0,1]")
+    # NOUVEAU : Choix du modèle (optionnel, 'rf' par défaut)
+    model_type: str = Field("rf", description="Type de modèle à utiliser : 'rf' ou 'mlp'")
 
     @field_validator("features")
     @classmethod
     def check_pixels(cls, v):
         if len(v) != 784:
             raise ValueError(f"Attendu 784 pixels, recu {len(v)}")
+        return v
+    
+    @field_validator("model_type")
+    @classmethod
+    def check_model_type(cls, v):
+        allowed = ["rf", "mlp"]
+        if v not in allowed:
+            raise ValueError(f"Modèle '{v}' non supporté. Choisissez parmi {allowed}")
         return v
 
 class PredictionOutput(BaseModel):
@@ -24,7 +34,9 @@ class PredictionOutput(BaseModel):
     probabilities: List[float]
     confidence: float
     top3: List[dict]
+    model_used: str # Ajouté pour confirmer quel modèle a répondu
 
+# Les autres classes restent identiques car elles utilisent PredictionInput
 class BatchPredictionInput(BaseModel):
     inputs: List[PredictionInput]
 

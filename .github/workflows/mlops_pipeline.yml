@@ -108,7 +108,7 @@ jobs:
         run: |
           echo "Tests terminés !"
 
- # ── JOB 2 : Déploiement HuggingFace ───────────────────────
+# ── JOB 2 : Déploiement HuggingFace ───────────────────────
   deploy:
     name: Déploiement HuggingFace
     runs-on: ubuntu-latest

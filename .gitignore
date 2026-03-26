@@ -16,9 +16,11 @@ __pycache__/
 data/raw/
 data/processed/
 
-# Modèles (trop volumineux pour GitHub)
-models/*.pkl
-models/*.keras
+models/*
+!models/rf_model.pkl
+!models/mlp_model.pkl
+!models/feature_names.pkl
+!models/cnn_model.keras
 
 # Rapports générés
 reports/
