@@ -1,5 +1,5 @@
-from typing import List, Optional
-from pydantic import BaseModel, Field, field_validator
+from typing import List, Dict
+from pydantic import BaseModel, Field, field_validator, ConfigDict
 
 FASHION_LABELS = {
     0: "T-shirt/top", 1: "Trouser",  2: "Pullover",
@@ -9,8 +9,10 @@ FASHION_LABELS = {
 }
 
 class PredictionInput(BaseModel):
+    # Désactive l'avertissement pour les noms de champs réservés
+    model_config = ConfigDict(protected_namespaces=())
+    
     features: List[float] = Field(..., description="784 pixels normalises [0,1]")
-    # NOUVEAU : Choix du modèle (optionnel, 'rf' par défaut)
     model_type: str = Field("rf", description="Type de modèle à utiliser : 'rf' ou 'mlp'")
 
     @field_validator("features")
@@ -29,14 +31,15 @@ class PredictionInput(BaseModel):
         return v
 
 class PredictionOutput(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    
     prediction: int
     label: str
     probabilities: List[float]
     confidence: float
     top3: List[dict]
-    model_used: str # Ajouté pour confirmer quel modèle a répondu
+    model_used: str 
 
-# Les autres classes restent identiques car elles utilisent PredictionInput
 class BatchPredictionInput(BaseModel):
     inputs: List[PredictionInput]
 
@@ -45,13 +48,17 @@ class BatchPredictionOutput(BaseModel):
     total: int
 
 class HealthResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    
     status: str
     model_status: str
     model_uptime_seconds: float
     version: str
 
 class ModelInfoResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    
     model_type: str
     n_features: int
     n_classes: int
-    class_labels: dict
+    class_labels: Dict[str, str]
