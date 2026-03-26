@@ -1,0 +1,40 @@
+project:
+  name: "fashion-mnist-mlops"
+  version: "2.0.0"
+
+data:
+  raw_path: "data/raw/dataset.csv"
+  processed_path: "data/processed/"
+  test_size: 0.2
+  random_state: 42
+  target_column: "target"
+  sample_size: 50000
+
+training:
+  scoring_metric: "f1_weighted"
+  random_forest:
+    n_estimators: 200
+    max_depth: 30
+    n_jobs: -1
+    random_state: 42
+  mlp:
+    hidden_layer_sizes: [512, 256, 128]
+    activation: "relu"
+    max_iter: 30
+    learning_rate_init: 0.001
+    early_stopping: true
+
+mlflow:
+  tracking_uri: "http://localhost:5000"
+  experiment_name: "fashion-mnist-comparison"
+  artifact_path: "model"
+
+api:
+  host: "0.0.0.0"
+  port: 8000
+  model_path: "models/model.pkl"
+
+monitoring:
+  reference_data_path: "data/processed/reference.csv"
+  current_data_path: "data/processed/current.csv"
+  report_output_path: "reports/"

@@ -1,0 +1,36 @@
+# Environnement virtuel
+venv/
+
+# MLflow
+mlruns/
+mlflow.db
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.coverage
+
+# Données (trop volumineuses pour GitHub)
+data/raw/
+data/processed/
+
+# Modèles (trop volumineux pour GitHub)
+models/*.pkl
+models/*.keras
+
+# Rapports générés
+reports/
+logs/
+
+# Variables d'environnement
+.env
+secrets.yaml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+*.log

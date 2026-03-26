@@ -1,0 +1,2 @@
+Error: Command failed with exit code 255: /home/joan/Documents/GE-IT M1 IA&BIG DATA/Apprentissage supervisé et non supervisé/mlops-project/venv/bin/python -m dvc dag --md
+ERROR: /home/joan/Documents/GE-IT M1 IA&BIG DATA/Apprentissage supervisé et non supervisé/mlops-project is not a git repository
