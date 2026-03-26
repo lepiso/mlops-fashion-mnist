@@ -108,7 +108,7 @@ jobs:
         run: |
           echo "Tests terminés !"
 
-  # ── JOB 2 : Déploiement HuggingFace ───────────────────────
+ # ── JOB 2 : Déploiement HuggingFace ───────────────────────
   deploy:
     name: Déploiement HuggingFace
     runs-on: ubuntu-latest
@@ -127,50 +127,56 @@ jobs:
       - name: Installer huggingface_hub
         run: pip install huggingface_hub
 
+      # --- SECTION GRADIO ---
       - name: Déployer Gradio sur HuggingFace
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           HF_USERNAME: ${{ secrets.HF_USERNAME }}
         run: |
           python3 -c "
-          import os
+          import os, shutil
           from huggingface_hub import HfApi, login
-
           login(token=os.environ['HF_TOKEN'])
-          api      = HfApi()
+          api = HfApi()
           username = os.environ['HF_USERNAME']
-
-          # Upload gradio app
-          import shutil
+          
           os.makedirs('/tmp/hf_gradio', exist_ok=True)
           shutil.copy2('hf_space/gradio_app.py', '/tmp/hf_gradio/app.py')
-
           with open('/tmp/hf_gradio/requirements.txt', 'w') as f:
-              f.write('gradio\nrequests\nPillow\nnumpy\nmatplotlib\n')
-
+              f.write('gradio\nrequests\nPillow\nnumpy\nmatplotlib\nscikit-learn\njoblib\n')
+          
           with open('/tmp/hf_gradio/README.md', 'w') as f:
-              f.write('''---
-          title: Fashion MNIST MLOps
-          emoji: 👗
-          colorFrom: purple
-          colorTo: blue
-          sdk: gradio
-          app_file: app.py
-          pinned: false
-          ---
-          # Fashion MNIST MLOps Pipeline
-          ''')
+              f.write('---\ntitle: Fashion MNIST Gradio\nsdk: gradio\napp_file: app.py\n---\n')
 
-          api.upload_folder(
-              folder_path='/tmp/hf_gradio',
-              repo_id=f\"{username}/fashion-mnist-gradio\",
-              repo_type='space',
-              commit_message='Auto-deploy via GitHub Actions'
-          )
-          print('Déploiement Gradio réussi !')
+          api.upload_folder(folder_path='/tmp/hf_gradio', repo_id=f'{username}/fashion-mnist-gradio', repo_type='space')
           "
 
+      # --- SECTION STREAMLIT
+      - name: Déployer Streamlit sur HuggingFace
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_USERNAME: ${{ secrets.HF_USERNAME }}
+        run: |
+          python3 -c "
+          import os, shutil
+          from huggingface_hub import HfApi, login
+          login(token=os.environ['HF_TOKEN'])
+          api = HfApi()
+          username = os.environ['HF_USERNAME']
+          
+          os.makedirs('/tmp/hf_streamlit', exist_ok=True)
+          shutil.copy2('hf_space/streamlit_hf.py', '/tmp/hf_streamlit/app.py')
+          
+          with open('/tmp/hf_streamlit/requirements.txt', 'w') as f:
+              f.write('streamlit\npandas\nnumpy\nmatplotlib\nrequests\nPillow\n')
+          
+          with open('/tmp/hf_streamlit/README.md', 'w') as f:
+              f.write('---\ntitle: Fashion MNIST Streamlit\nsdk: streamlit\napp_file: app.py\n---\n')
+
+          api.upload_folder(folder_path='/tmp/hf_streamlit', repo_id=f'{username}/fashion-mnist-app', repo_type='space')
+          "
       - name: Résumé du déploiement
         run: |
           echo "Déploiement terminé !"
           echo "Gradio : https://huggingface.co/spaces/${{ secrets.HF_USERNAME }}/fashion-mnist-gradio"
+          echo "Streamlit : https://huggingface.co/spaces/${{ secrets.HF_USERNAME }}/fashion-mnist-app"
